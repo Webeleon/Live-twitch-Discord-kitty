@@ -5,13 +5,15 @@ import { AppModule } from './../src/app.module';
 import { Repository } from 'typeorm';
 import { Kitty } from '../src/kitty/kitty.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import exp from 'constants';
 
 describe('KittyController (e2e)', () => {
   let app: INestApplication;
   let kittyRepo: Repository<Kitty>;
 
   beforeEach(async () => {
+    process.env.DB_TYPE = 'better-sqlite3';
+    process.env.DB_DATABASE = ':memory:';
+
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
