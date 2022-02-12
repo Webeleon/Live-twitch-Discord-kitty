@@ -1,11 +1,9 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../user/user.entity';
 
 @Entity()
 export class Kitty {
-  @PrimaryColumn({
-    generated: 'uuid',
-  })
+  @PrimaryGeneratedColumn('uuid')
   uuid: string;
 
   @Column()

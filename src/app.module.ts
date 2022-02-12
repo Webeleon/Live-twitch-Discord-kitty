@@ -7,11 +7,13 @@ import { appConfig } from './configurations/app.config';
 import { databaseConfig } from './configurations/database.config';
 import { UserModule } from './user/user.module';
 import { User } from './user/user.entity';
+import { DiscordModule } from './discord/discord.module';
+import { discordConfig } from './configurations/discord.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [appConfig, databaseConfig],
+      load: [appConfig, databaseConfig, discordConfig],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -24,6 +26,7 @@ import { User } from './user/user.entity';
     }),
     KittyModule,
     UserModule,
+    DiscordModule,
   ],
 })
 export class AppModule {}
