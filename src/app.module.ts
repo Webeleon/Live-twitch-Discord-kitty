@@ -20,8 +20,7 @@ import { discordConfig } from './configurations/discord.config';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         ...config.get('database'),
-        entities: [Kitty, User],
-        synchronize: true,
+        entities: [User, Kitty],
       }),
     }),
     KittyModule,
