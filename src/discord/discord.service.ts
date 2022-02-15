@@ -45,6 +45,9 @@ export class DiscordService {
             description:
               'Ce bot est codé en live sur le stream twitch de webeleon!',
             url: 'http://twitch.tv/webeleon',
+            footer: {
+              text: 'Version alpha, toutes les données seront effacé lors du passage en beta.',
+            },
           }),
         ],
       });
