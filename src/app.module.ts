@@ -9,6 +9,7 @@ import { UserModule } from './user/user.module';
 import { User } from './user/user.entity';
 import { DiscordModule } from './discord/discord.module';
 import { discordConfig } from './configurations/discord.config';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { discordConfig } from './configurations/discord.config';
     KittyModule,
     UserModule,
     DiscordModule,
+    HealthModule,
   ],
 })
 export class AppModule {}
