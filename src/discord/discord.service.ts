@@ -1,15 +1,19 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { Client, Intents, MessageEmbed } from 'discord.js';
-import {
-  DISCORD_CONFIG,
-  DiscordConfig,
-} from '../configurations/discord.config';
+import { Client, Intents, Message, MessageEmbed } from 'discord.js';
+import { discordConfig } from '../configurations/discord.config';
+import { ConfigType } from '@nestjs/config';
+import { CommandsService } from './commands/commands.service';
+import { config } from 'rxjs';
 
 @Injectable()
 export class DiscordService {
   client: Client;
 
-  constructor(@Inject(DISCORD_CONFIG) private readonly config: DiscordConfig) {
+  constructor(
+    @Inject(discordConfig.KEY)
+    private readonly config: ConfigType<typeof discordConfig>,
+    private readonly commandService: CommandsService,
+  ) {
     Logger.log(
       `https://discord.com/api/oauth2/authorize?client_id=${config.clientId}&permissions=0&scope=bot%20applications.commands`,
       DiscordService.name,
@@ -29,29 +33,40 @@ export class DiscordService {
       Logger.error(error.message, DiscordService.name);
     });
 
-    this.client.login(this.config.token);
+    await this.client.login(this.config.token);
   }
 
   registerCommands() {
     Logger.log('Registering commands', DiscordService.name);
-    this.client.on('messageCreate', async (message) => {
-      if (message.author.bot) return;
-      if (!this.startWithPrefix(message.cleanContent)) return;
+    this.client.on('messageCreate', (message) => this.onMessage(message));
+  }
 
-      await message.channel.send({
-        embeds: [
-          new MessageEmbed({
-            title: 'Work In Progress',
-            description:
-              'Ce bot est codé en live sur le stream twitch de webeleon!',
-            url: 'http://twitch.tv/webeleon',
-            footer: {
-              text: 'Version alpha, toutes les données seront effacé lors du passage en beta.',
-            },
-          }),
-        ],
+  async onMessage(message: Message): Promise<void> {
+    if (message.author.bot) return;
+    if (!this.startWithPrefix(message.cleanContent)) return;
+
+    try {
+      const response = await this.commandService.dispatch(
+        this.getMessageContentWithoutPrefix(message.content),
+        message,
+      );
+
+      response.setFooter({
+        text: `This bot is in dev, data will be wiped`,
       });
-    });
+
+      await message.reply({
+        embeds: [response],
+      });
+    } catch (e) {
+      Logger.error(e.message, e.stack, DiscordService.name);
+    }
+  }
+
+  getMessageContentWithoutPrefix(messageContent: string): string {
+    return messageContent
+      .replace(new RegExp(`^${this.config.prefix}`, 'i'), '')
+      .trim();
   }
 
   startWithPrefix(message: string): boolean {

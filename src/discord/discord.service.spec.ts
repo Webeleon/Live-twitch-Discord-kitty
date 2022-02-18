@@ -1,16 +1,24 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DiscordService } from './discord.service';
-import { DISCORD_CONFIG } from '../configurations/discord.config';
+import { getConfigToken } from '@nestjs/config';
+import { CommandsService } from './commands/commands.service';
 
 describe('DiscordService', () => {
   let discordService: DiscordService;
+  const commandsServiceMock = {
+    dispatch: jest.fn(),
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DiscordService,
         {
-          provide: DISCORD_CONFIG,
+          provide: CommandsService,
+          useValue: commandsServiceMock,
+        },
+        {
+          provide: getConfigToken('discord'),
           useValue: {
             prefix: 'kitties',
           },
@@ -23,6 +31,22 @@ describe('DiscordService', () => {
 
   it('should be defined', () => {
     expect(discordService).toBeDefined();
+  });
+
+  it('[getMessageContentWithoutPrefix]', () => {
+    expect(discordService.getMessageContentWithoutPrefix('kitties start')).toBe(
+      'start',
+    );
+    expect(discordService.getMessageContentWithoutPrefix('KITTIES start')).toBe(
+      'start',
+    );
+    expect(
+      discordService.getMessageContentWithoutPrefix('kitties pet mistigri'),
+    ).toBe('pet mistigri');
+
+    expect(
+      discordService.getMessageContentWithoutPrefix('kitties pet kitties'),
+    ).toBe('pet kitties');
   });
 
   it('[startWithPrefix] check if message start with the configured prefix case insensitive', () => {
