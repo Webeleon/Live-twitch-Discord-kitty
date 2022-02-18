@@ -11,6 +11,6 @@ async function bootstrap() {
   await discordService.startClient();
   discordService.registerCommands();
 
-  app.listen(configs.get('app.port'));
+  await app.listen(configs.get('app.port'), '0.0.0.0');
 }
 bootstrap();
