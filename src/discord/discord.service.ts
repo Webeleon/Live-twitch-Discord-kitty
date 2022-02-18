@@ -52,7 +52,7 @@ export class DiscordService {
       );
 
       response.setFooter({
-        text: `This bot is in dev, data will be wiped`,
+        text: `This bot is in dev, data will be wiped. Developed live on twitch.`,
       });
 
       await message.reply({
