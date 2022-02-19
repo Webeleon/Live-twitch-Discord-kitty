@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Kitty } from './kitty.entity';
 import { Repository } from 'typeorm';
 import { CreateKittyDto } from './dto/create-kitty.dto';
+import { KittenSex } from './enum/sex.enum';
 
 @Injectable()
 export class KittyService {
@@ -17,22 +18,24 @@ export class KittyService {
 
   async create({ name }: CreateKittyDto): Promise<Kitty> {
     const kitty = this.kittyRepository.create({
-      dna: this.generateRandomDna(),
       name,
+      sex: this.generateRandomSex(),
+      eyeColor: this.generateRandomColor(),
+      furColor: this.generateRandomColor(),
     });
     await this.kittyRepository.save(kitty);
     return kitty;
   }
 
-  generateRandomDna(): string {
-    /**
-     * sex
-     * fur color
-     * eye color
-     */
+  generateRandomColor(): string {
+    const toHexString = (n: number) => n.toString(16).padStart(6, '0');
+    return toHexString(Math.floor(Math.random() * 0xffffff));
+  }
 
-    const toHexString = (n: number) => n.toString(16).padStart(2, '0');
-    const genRandHex = () => toHexString(Math.floor(Math.random() * 0xff));
-    return [genRandHex(), genRandHex(), genRandHex()].join('');
+  generateRandomSex(): KittenSex {
+    if (new Date().getTime() % 2 === 0) {
+      return KittenSex.FEMALE;
+    }
+    return KittenSex.MALE;
   }
 }

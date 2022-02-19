@@ -22,6 +22,7 @@ import { HealthModule } from './health/health.module';
       useFactory: (config: ConfigService) => ({
         ...config.get('database'),
         entities: [User, Kitty],
+        synchronize: true,
       }),
     }),
     KittyModule,

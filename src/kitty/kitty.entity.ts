@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { User } from '../user/user.entity';
+import { KittenSex } from './enum/sex.enum';
 
 @Entity({
   name: 'kitties',
@@ -9,10 +10,18 @@ export class Kitty {
   uuid: string;
 
   @Column()
-  dna: string;
+  name: string;
+
+  @Column({
+    enum: KittenSex,
+  })
+  sex: KittenSex;
 
   @Column()
-  name: string;
+  furColor: string;
+
+  @Column()
+  eyeColor: string;
 
   @ManyToOne(() => User, (user) => user.kitties)
   user: User;

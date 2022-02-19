@@ -4,6 +4,7 @@ import { TypeormSqliteTestingModule } from '../test-utils/typeorm-sqlite-testing
 import { Repository } from 'typeorm';
 import { Kitty } from './kitty.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { KittenSex } from './enum/sex.enum';
 
 describe('KittyService', () => {
   let kittyService: KittyService;
@@ -27,28 +28,53 @@ describe('KittyService', () => {
     expect(kittyService).toBeDefined();
   });
 
-  it('generate random dna', () => {
-    for (let i = 0; i < 1000; i++) {
-      const randomDNA = kittyService.generateRandomDna();
-      expect(randomDNA).toHaveLength(6);
+  it('generate random color', () => {
+    for (let i = 0; i < 100; i++) {
+      expect(kittyService.generateRandomColor()).toHaveLength(6);
     }
+  });
+
+  it('generate random sex', () => {
+    const sexes: KittenSex[] = [];
+    for (let j = 0; j < 100000; j++) {
+      const sex = kittyService.generateRandomSex();
+      expect(sex).toMatch(new RegExp(`${KittenSex.MALE}|${KittenSex.FEMALE}`));
+      sexes.push(sex);
+    }
+    const count = sexes.reduce(
+      (carry, item) => {
+        carry[item]++;
+        return carry;
+      },
+      {
+        [KittenSex.MALE]: 0,
+        [KittenSex.FEMALE]: 0,
+      },
+    );
+    const ratio = count[KittenSex.MALE] / count[KittenSex.FEMALE];
+    expect(ratio).toBeGreaterThan(0.95);
+    expect(ratio).toBeLessThan(1.05);
   });
 
   it('fetch the list of kitties in the database', async () => {
     await kittyRepo.insert({
       name: 'test1',
-      dna: 'dna1',
+      sex: KittenSex.MALE,
+      furColor: '000000',
+      eyeColor: '000000',
     });
     await kittyRepo.insert({
       name: 'test2',
-      dna: 'dna2',
+      sex: KittenSex.MALE,
+      furColor: '000000',
+      eyeColor: '000000',
     });
 
     const list = await kittyService.list();
     expect(list).toHaveLength(2);
   });
 
-  it('create a kitty with a random dna', async () => {
+  it('create a kitty with random properties', async () => {
     await kittyService.create({ name: 'chat de test' });
 
     const kitties = await kittyRepo.find();
@@ -56,6 +82,10 @@ describe('KittyService', () => {
     const kitty = kitties[0];
     expect(kitty.uuid).toBeDefined();
     expect(kitty.name).toBe('chat de test');
-    expect(kitty.dna).toHaveLength(6);
+    expect(kitty.sex).toMatch(
+      new RegExp(`${KittenSex.FEMALE}|${KittenSex.MALE}`),
+    );
+    expect(kitty.furColor).toHaveLength(6);
+    expect(kitty.eyeColor).toHaveLength(6);
   });
 });
