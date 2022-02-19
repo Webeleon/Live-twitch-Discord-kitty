@@ -40,6 +40,11 @@ describe('UserService', () => {
     expect(userService).toBeDefined();
   });
 
+  it('does user exist', async () => {
+    expect(await userService.userExist('user_1')).toBe(true);
+    expect(await userService.userExist('nope')).toBe(false);
+  });
+
   it('Create user', async () => {
     const user = await userService.createUser('new user');
     expect(user).toBeDefined();
@@ -50,14 +55,14 @@ describe('UserService', () => {
 
   describe('Find user by discordID', () => {
     it('Find and existing user', async () => {
-      const user = await userService.getUserByDiscordId('user_1');
+      const user = await userService.getOrCreateUserByDiscordId('user_1');
 
       expect(user).toBeDefined();
       expect(user.discordId).toBe('user_1');
     });
 
     it('Create the user when not found', async () => {
-      const user = await userService.getUserByDiscordId('not found');
+      const user = await userService.getOrCreateUserByDiscordId('not found');
       expect(user).toBeDefined();
       expect(user.discordId).toBe('not found');
 

@@ -6,5 +6,6 @@ import { Kitty } from './kitty.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Kitty])],
   providers: [KittyService],
+  exports: [KittyService],
 })
 export class KittyModule {}

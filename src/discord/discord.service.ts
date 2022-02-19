@@ -51,9 +51,11 @@ export class DiscordService {
         message,
       );
 
-      response.setFooter({
-        text: `This bot is in dev, data will be wiped. Developed live on twitch.`,
-      });
+      response
+        .setFooter({
+          text: `This bot is in dev, data will be wiped. Developed live on twitch.`,
+        })
+        .setURL('https://twitch.tv/webeleon');
 
       await message.reply({
         embeds: [response],

@@ -9,7 +9,12 @@ export class UserService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  async getUserByDiscordId(discordId: string): Promise<User> {
+  async userExist(discordId: string): Promise<boolean> {
+    const user = await this.userRepository.findOne({ discordId });
+    return !!user;
+  }
+
+  async getOrCreateUserByDiscordId(discordId: string): Promise<User> {
     const user = await this.userRepository.findOne({ discordId });
     if (!user) {
       return this.createUser(discordId);

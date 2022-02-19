@@ -16,12 +16,13 @@ export class KittyService {
     return this.kittyRepository.find();
   }
 
-  async create({ name }: CreateKittyDto): Promise<Kitty> {
+  async create({ name, user }: CreateKittyDto): Promise<Kitty> {
     const kitty = this.kittyRepository.create({
       name,
       sex: this.generateRandomSex(),
       eyeColor: this.generateRandomColor(),
       furColor: this.generateRandomColor(),
+      user,
     });
     await this.kittyRepository.save(kitty);
     return kitty;

@@ -5,10 +5,12 @@ import { Repository } from 'typeorm';
 import { Kitty } from './kitty.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { KittenSex } from './enum/sex.enum';
+import { User } from '../user/user.entity';
 
 describe('KittyService', () => {
   let kittyService: KittyService;
   let kittyRepo: Repository<Kitty>;
+  let userRepo: Repository<User>;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -18,6 +20,7 @@ describe('KittyService', () => {
 
     kittyService = module.get<KittyService>(KittyService);
     kittyRepo = module.get<Repository<Kitty>>(getRepositoryToken(Kitty));
+    userRepo = module.get<Repository<User>>(getRepositoryToken(User));
   });
 
   afterEach(async () => {
@@ -75,7 +78,15 @@ describe('KittyService', () => {
   });
 
   it('create a kitty with random properties', async () => {
-    await kittyService.create({ name: 'chat de test' });
+    const user = await userRepo.create({
+      uuid: '123',
+      discordId: '123',
+    });
+    await userRepo.insert(user);
+    await kittyService.create({
+      name: 'chat de test',
+      user,
+    });
 
     const kitties = await kittyRepo.find();
     expect(kitties).toHaveLength(1);
