@@ -3,6 +3,7 @@ import { Message, MessageEmbed } from 'discord.js';
 import { KittyService } from '../../../kitty/kitty.service';
 import { UserService } from '../../../user/user.service';
 import { Injectable } from '@nestjs/common';
+import { Kitty } from '../../../kitty/kitty.entity';
 
 @Injectable()
 export class StartHandler implements CommandHandler {
@@ -35,14 +36,19 @@ export class StartHandler implements CommandHandler {
       user,
     });
 
-    const response = new MessageEmbed()
+    return this.generateSuccessMessage(kitty);
+  }
+
+  generateSuccessMessage(kitty: Kitty): MessageEmbed {
+    const message = new MessageEmbed()
       .setTitle("welcome to kitten's club")
-      .setDescription(`You've got youself a kitten named ${name}`)
+      .setDescription(`You've got youself a kitten named ${kitty.name}`)
       .addField('sex', kitty.sex)
       .addField('eye color', kitty.eyeColor)
       .addField('fur color', kitty.furColor)
       .setColor(`#${kitty.furColor}`);
-    return response;
+
+    return message;
   }
 
   getKittenNameFromMessage(message: string): string {

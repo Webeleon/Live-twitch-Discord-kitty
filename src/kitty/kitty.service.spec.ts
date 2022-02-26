@@ -99,4 +99,35 @@ describe('KittyService', () => {
     expect(kitty.furColor).toHaveLength(6);
     expect(kitty.eyeColor).toHaveLength(6);
   });
+
+  it('find the list of kitties by discord userID', async () => {
+    const user1 = userRepo.create({
+      discordId: 'user_1',
+    });
+    const user2 = userRepo.create({
+      discordId: 'user_2',
+    });
+    await userRepo.insert(user1);
+    await userRepo.insert(user2);
+
+    await kittyRepo.insert({
+      name: 'coco',
+      sex: KittenSex.MALE,
+      eyeColor: 'ffffff',
+      furColor: 'fffff',
+      user: user1,
+    });
+
+    await kittyRepo.insert({
+      name: 'foo',
+      sex: KittenSex.FEMALE,
+      eyeColor: 'ffffff',
+      furColor: 'fffff',
+      user: user2,
+    });
+
+    const kitties = await kittyService.listByDiscordId('user_1');
+    expect(kitties).toHaveLength(1);
+    expect(kitties[0].name).toBe('coco');
+  });
 });

@@ -28,6 +28,17 @@ export class KittyService {
     return kitty;
   }
 
+  async listByDiscordId(discordId: string): Promise<Kitty[]> {
+    return this.kittyRepository.find({
+      relations: ['user'],
+      where: {
+        user: {
+          discordId,
+        },
+      },
+    });
+  }
+
   generateRandomColor(): string {
     const toHexString = (n: number) => n.toString(16).padStart(6, '0');
     return toHexString(Math.floor(Math.random() * 0xffffff));

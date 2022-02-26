@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CommandsService } from './commands.service';
 import { StartHandler } from './handlers/start.handler';
 import { Message } from 'discord.js';
+import { ListHandler } from './handlers/list.handler';
 
 describe('CommandsService', () => {
   let commandsService: CommandsService;
@@ -17,6 +18,13 @@ describe('CommandsService', () => {
         {
           provide: StartHandler,
           useValue: startCommandHandlerMock,
+        },
+        {
+          provide: ListHandler,
+          useValue: {
+            test: jest.fn(),
+            run: jest.fn(),
+          },
         },
       ],
     }).compile();
