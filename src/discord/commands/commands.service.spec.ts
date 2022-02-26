@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CommandsService } from './commands.service';
-import { StartHandler } from './handlers/start.handler';
+import { StartHandler } from './handlers/start/start.handler';
 import { Message } from 'discord.js';
-import { ListHandler } from './handlers/list.handler';
+import { ListHandler } from './handlers/list/list.handler';
 
 describe('CommandsService', () => {
   let commandsService: CommandsService;

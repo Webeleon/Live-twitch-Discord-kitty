@@ -1,8 +1,7 @@
-import { CommandHandler } from '../interfaces/command-handler.interface';
+import { CommandHandler } from '../../interfaces/command-handler.interface';
 import { Message, MessageEmbed } from 'discord.js';
 import { Injectable } from '@nestjs/common';
-import { KittyService } from '../../../kitty/kitty.service';
-import { KittenSex } from '../../../kitty/enum/sex.enum';
+import { KittyService } from '../../../../kitty/kitty.service';
 
 @Injectable()
 export class ListHandler implements CommandHandler {

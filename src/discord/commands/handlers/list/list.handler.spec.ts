@@ -1,10 +1,9 @@
 import { ListHandler } from './list.handler';
 import { Test, TestingModule } from '@nestjs/testing';
-import { KittyService } from '../../../kitty/kitty.service';
-import { Kitty } from '../../../kitty/kitty.entity';
-import { KittenSex } from '../../../kitty/enum/sex.enum';
+import { KittyService } from '../../../../kitty/kitty.service';
+import { Kitty } from '../../../../kitty/kitty.entity';
+import { KittenSex } from '../../../../kitty/enum/sex.enum';
 import { Message } from 'discord.js';
-import e from 'express';
 
 describe('[Handler] list kitties', () => {
   let listHandler: ListHandler;

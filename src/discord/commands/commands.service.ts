@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { StartHandler } from './handlers/start.handler';
+import { StartHandler } from './handlers/start/start.handler';
 import { Message } from 'discord.js';
 import { CommandHandler } from './interfaces/command-handler.interface';
-import { ListHandler } from './handlers/list.handler';
+import { ListHandler } from './handlers/list/list.handler';
 
 @Injectable()
 export class CommandsService {

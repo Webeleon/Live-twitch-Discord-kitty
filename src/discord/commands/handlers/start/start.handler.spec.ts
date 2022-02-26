@@ -1,7 +1,7 @@
 import { StartHandler } from './start.handler';
 import { Test } from '@nestjs/testing';
-import { UserService } from '../../../user/user.service';
-import { KittyService } from '../../../kitty/kitty.service';
+import { UserService } from '../../../../user/user.service';
+import { KittyService } from '../../../../kitty/kitty.service';
 
 describe('[discord][command][handler] start', () => {
   let startHandler: StartHandler;

@@ -1,9 +1,9 @@
-import { CommandHandler } from '../interfaces/command-handler.interface';
+import { CommandHandler } from '../../interfaces/command-handler.interface';
 import { Message, MessageEmbed } from 'discord.js';
-import { KittyService } from '../../../kitty/kitty.service';
-import { UserService } from '../../../user/user.service';
+import { KittyService } from '../../../../kitty/kitty.service';
+import { UserService } from '../../../../user/user.service';
 import { Injectable } from '@nestjs/common';
-import { Kitty } from '../../../kitty/kitty.entity';
+import { Kitty } from '../../../../kitty/kitty.entity';
 
 @Injectable()
 export class StartHandler implements CommandHandler {
