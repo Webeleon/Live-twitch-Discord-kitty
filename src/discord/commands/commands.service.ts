@@ -3,6 +3,7 @@ import { StartHandler } from './handlers/start/start.handler';
 import { Message } from 'discord.js';
 import { CommandHandler } from './interfaces/command-handler.interface';
 import { ListHandler } from './handlers/list/list.handler';
+import { ShowHandler } from './handlers/show/show.handler';
 
 @Injectable()
 export class CommandsService {
@@ -11,8 +12,9 @@ export class CommandsService {
   constructor(
     private readonly startHandler: StartHandler,
     private readonly listHandler: ListHandler,
+    private readonly showHandler: ShowHandler,
   ) {
-    this.commands = [startHandler, listHandler];
+    this.commands = [startHandler, listHandler, showHandler];
   }
 
   async dispatch(messageWithoutPrefix: string, message: Message) {

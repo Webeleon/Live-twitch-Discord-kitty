@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Kitty } from './kitty.entity';
 import { Repository } from 'typeorm';
@@ -26,6 +26,29 @@ export class KittyService {
     });
     await this.kittyRepository.save(kitty);
     return kitty;
+  }
+
+  async findOneByDiscordIdAndKittenName(
+    discordId: string,
+    kittenName: string,
+  ): Promise<Kitty> {
+    const kitten = await this.kittyRepository.findOne({
+      relations: ['user'],
+      where: {
+        name: kittenName,
+        user: {
+          discordId,
+        },
+      },
+    });
+
+    if (!kitten) {
+      throw new NotFoundException(
+        `Kitten with name ${kittenName} for discordId ${discordId} not found`,
+      );
+    }
+
+    return kitten;
   }
 
   async listByDiscordId(discordId: string): Promise<Kitty[]> {

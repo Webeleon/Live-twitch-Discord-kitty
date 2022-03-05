@@ -6,14 +6,16 @@ import { Kitty } from './kitty.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { KittenSex } from './enum/sex.enum';
 import { User } from '../user/user.entity';
+import { NotFoundException } from '@nestjs/common';
 
 describe('KittyService', () => {
   let kittyService: KittyService;
   let kittyRepo: Repository<Kitty>;
   let userRepo: Repository<User>;
+  let module: TestingModule;
 
-  beforeAll(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+  beforeEach(async () => {
+    module = await Test.createTestingModule({
       imports: [...TypeormSqliteTestingModule()],
       providers: [KittyService],
     }).compile();
@@ -24,8 +26,35 @@ describe('KittyService', () => {
   });
 
   afterEach(async () => {
-    await kittyRepo.delete({});
+    await module.close();
   });
+
+  const seedKittens = async () => {
+    const user1 = userRepo.create({
+      discordId: 'user_1',
+    });
+    const user2 = userRepo.create({
+      discordId: 'user_2',
+    });
+    await userRepo.insert(user1);
+    await userRepo.insert(user2);
+
+    await kittyRepo.insert({
+      name: 'coco',
+      sex: KittenSex.MALE,
+      eyeColor: 'ffffff',
+      furColor: 'fffff',
+      user: user1,
+    });
+
+    await kittyRepo.insert({
+      name: 'foo',
+      sex: KittenSex.FEMALE,
+      eyeColor: 'ffffff',
+      furColor: 'fffff',
+      user: user2,
+    });
+  };
 
   it('should be defined', () => {
     expect(kittyService).toBeDefined();
@@ -101,33 +130,32 @@ describe('KittyService', () => {
   });
 
   it('find the list of kitties by discord userID', async () => {
-    const user1 = userRepo.create({
-      discordId: 'user_1',
-    });
-    const user2 = userRepo.create({
-      discordId: 'user_2',
-    });
-    await userRepo.insert(user1);
-    await userRepo.insert(user2);
-
-    await kittyRepo.insert({
-      name: 'coco',
-      sex: KittenSex.MALE,
-      eyeColor: 'ffffff',
-      furColor: 'fffff',
-      user: user1,
-    });
-
-    await kittyRepo.insert({
-      name: 'foo',
-      sex: KittenSex.FEMALE,
-      eyeColor: 'ffffff',
-      furColor: 'fffff',
-      user: user2,
-    });
+    await seedKittens();
 
     const kitties = await kittyService.listByDiscordId('user_1');
     expect(kitties).toHaveLength(1);
     expect(kitties[0].name).toBe('coco');
+  });
+
+  describe('find kitten by discordId and name', () => {
+    it('return the kitten if exist', async () => {
+      await seedKittens();
+
+      const kitten = await kittyService.findOneByDiscordIdAndKittenName(
+        'user_1',
+        'coco',
+      );
+
+      expect(kitten).toBeDefined();
+      expect(kitten.name).toBe('coco');
+      expect(kitten.sex).toBe(KittenSex.MALE);
+    });
+    it('throw a not found error if the not found', async () => {
+      await seedKittens();
+
+      expect(
+        kittyService.findOneByDiscordIdAndKittenName('user_1', 'invalid'),
+      ).rejects.toThrowError(NotFoundException);
+    });
   });
 });

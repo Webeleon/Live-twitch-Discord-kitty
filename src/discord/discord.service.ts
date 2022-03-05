@@ -1,9 +1,8 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
-import { Client, Intents, Message, MessageEmbed } from 'discord.js';
+import { Client, Intents, Message } from 'discord.js';
 import { discordConfig } from '../configurations/discord.config';
 import { ConfigType } from '@nestjs/config';
 import { CommandsService } from './commands/commands.service';
-import { config } from 'rxjs';
 
 @Injectable()
 export class DiscordService {

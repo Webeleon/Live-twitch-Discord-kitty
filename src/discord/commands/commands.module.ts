@@ -4,10 +4,11 @@ import { StartHandler } from './handlers/start/start.handler';
 import { KittyModule } from '../../kitty/kitty.module';
 import { UserModule } from '../../user/user.module';
 import { ListHandler } from './handlers/list/list.handler';
+import { ShowHandler } from './handlers/show/show.handler';
 
 @Module({
   imports: [KittyModule, UserModule],
-  providers: [CommandsService, StartHandler, ListHandler],
+  providers: [CommandsService, StartHandler, ListHandler, ShowHandler],
   exports: [CommandsService],
 })
 export class CommandsModule {}
