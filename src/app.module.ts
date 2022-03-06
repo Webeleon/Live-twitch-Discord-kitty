@@ -16,7 +16,7 @@ import { redisConfig } from './configurations/redis.config';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [appConfig, databaseConfig, discordConfig, redisConfig],
+      load: [appConfig, databaseConfig, discordConfig],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -28,7 +28,7 @@ import { redisConfig } from './configurations/redis.config';
       }),
     }),
     RedisModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [ConfigModule.forRoot({ load: [redisConfig] })],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => config.get('redis'),
     }),
