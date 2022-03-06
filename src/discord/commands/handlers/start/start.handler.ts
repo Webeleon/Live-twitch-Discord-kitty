@@ -46,6 +46,7 @@ export class StartHandler implements CommandHandler {
       .addField('sex', kitty.sex)
       .addField('eye color', kitty.eyeColor)
       .addField('fur color', kitty.furColor)
+      .addField('affection', kitty.affection.toString())
       .setColor(`#${kitty.furColor}`);
 
     return message;

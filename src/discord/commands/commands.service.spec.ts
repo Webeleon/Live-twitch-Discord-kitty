@@ -4,6 +4,7 @@ import { StartHandler } from './handlers/start/start.handler';
 import { Message } from 'discord.js';
 import { ListHandler } from './handlers/list/list.handler';
 import { ShowHandler } from './handlers/show/show.handler';
+import { PetHandler } from './handlers/pet/pet.handler';
 
 describe('CommandsService', () => {
   let commandsService: CommandsService;
@@ -29,6 +30,13 @@ describe('CommandsService', () => {
         },
         {
           provide: ShowHandler,
+          useValue: {
+            test: jest.fn(),
+            run: jest.fn(),
+          },
+        },
+        {
+          provide: PetHandler,
           useValue: {
             test: jest.fn(),
             run: jest.fn(),

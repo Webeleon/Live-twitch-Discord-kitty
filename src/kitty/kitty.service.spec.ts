@@ -7,6 +7,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { KittenSex } from './enum/sex.enum';
 import { User } from '../user/user.entity';
 import { NotFoundException } from '@nestjs/common';
+import { REDIS_CLIENT } from '@webeleon/nestjs-redis';
 
 describe('KittyService', () => {
   let kittyService: KittyService;
@@ -17,7 +18,16 @@ describe('KittyService', () => {
   beforeEach(async () => {
     module = await Test.createTestingModule({
       imports: [...TypeormSqliteTestingModule()],
-      providers: [KittyService],
+      providers: [
+        KittyService,
+        {
+          provide: REDIS_CLIENT,
+          useValue: {
+            TTL: jest.fn(),
+            set: jest.fn(),
+          },
+        },
+      ],
     }).compile();
 
     kittyService = module.get<KittyService>(KittyService);
@@ -135,6 +145,28 @@ describe('KittyService', () => {
     const kitties = await kittyService.listByDiscordId('user_1');
     expect(kitties).toHaveLength(1);
     expect(kitties[0].name).toBe('coco');
+  });
+
+  describe('pet kitten', () => {
+    beforeEach(async () => {
+      await seedKittens();
+    });
+
+    it('raise the affection level by one', async () => {
+      await kittyService.petKitten('user_1', 'coco');
+
+      const coco = await kittyRepo.findOne({
+        relations: ['user'],
+        where: {
+          name: 'coco',
+          user: {
+            discordId: 'user_1',
+          },
+        },
+      });
+
+      expect(coco.affection).toBe(1);
+    });
   });
 
   describe('find kitten by discordId and name', () => {

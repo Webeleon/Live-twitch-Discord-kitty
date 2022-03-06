@@ -23,6 +23,11 @@ export class Kitty {
   @Column()
   eyeColor: string;
 
+  @Column({
+    default: 0,
+  })
+  affection?: number;
+
   @ManyToOne(() => User, (user) => user.kitties)
   user: User;
 }

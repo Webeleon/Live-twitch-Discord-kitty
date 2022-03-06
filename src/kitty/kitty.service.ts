@@ -1,15 +1,18 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Kitty } from './kitty.entity';
 import { Repository } from 'typeorm';
 import { CreateKittyDto } from './dto/create-kitty.dto';
 import { KittenSex } from './enum/sex.enum';
+import { REDIS_CLIENT, RedisClient } from '@webeleon/nestjs-redis';
+import { OnCooldownError } from './error/on-cooldown.error';
 
 @Injectable()
 export class KittyService {
   constructor(
     @InjectRepository(Kitty)
     private readonly kittyRepository: Repository<Kitty>,
+    @Inject(REDIS_CLIENT) private readonly redisClient: RedisClient,
   ) {}
 
   list() {
@@ -25,6 +28,29 @@ export class KittyService {
       user,
     });
     await this.kittyRepository.save(kitty);
+    return kitty;
+  }
+
+  async markAsPetted(kitty: Kitty): Promise<void> {
+    await this.redisClient.set(`petted_${kitty.uuid}`, 'ok', {
+      EX: 60 * 5,
+    });
+  }
+
+  async petKitten(discordId: string, kittenName: string): Promise<Kitty> {
+    const kitty = await this.findOneByDiscordIdAndKittenName(
+      discordId,
+      kittenName,
+    );
+
+    const timeToPet = await this.redisClient.TTL(`petted_${kitty.uuid}`);
+    if (timeToPet > 0) {
+      throw new OnCooldownError(timeToPet);
+    }
+
+    kitty.affection++;
+    await this.kittyRepository.save(kitty);
+    await this.markAsPetted(kitty);
     return kitty;
   }
 

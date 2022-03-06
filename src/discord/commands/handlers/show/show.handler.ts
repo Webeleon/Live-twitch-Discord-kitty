@@ -29,8 +29,9 @@ export class ShowHandler implements CommandHandler {
       embed.setTitle(kitten.name);
       embed.setColor(`#${kitten.furColor}`);
       embed.setDescription(`sex: :${kitten.sex}_sign:
-      eye color: ${kitten.eyeColor}
-      fur color: ${kitten.furColor}`);
+      :eyes: eye color: ${kitten.eyeColor}
+      :cat: fur color: ${kitten.furColor}
+      :heart: affection: ${kitten.affection}`);
     } catch (error) {
       embed.setTitle(
         `Ooooh your kitten ${kittenName} does not seems to exist...`,

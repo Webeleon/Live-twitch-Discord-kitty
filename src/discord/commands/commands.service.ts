@@ -4,6 +4,7 @@ import { Message } from 'discord.js';
 import { CommandHandler } from './interfaces/command-handler.interface';
 import { ListHandler } from './handlers/list/list.handler';
 import { ShowHandler } from './handlers/show/show.handler';
+import { PetHandler } from './handlers/pet/pet.handler';
 
 @Injectable()
 export class CommandsService {
@@ -13,8 +14,9 @@ export class CommandsService {
     private readonly startHandler: StartHandler,
     private readonly listHandler: ListHandler,
     private readonly showHandler: ShowHandler,
+    private readonly petHandler: PetHandler,
   ) {
-    this.commands = [startHandler, listHandler, showHandler];
+    this.commands = [startHandler, listHandler, showHandler, petHandler];
   }
 
   async dispatch(messageWithoutPrefix: string, message: Message) {
