@@ -1,0 +1,29 @@
+name: merge
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: install
+        run: npm ci
+
+      - name: test
+        run: |
+          npm run test:e2e
+          npm run test:cov
+      - name: Merge main -> deploy
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          from_branch: main
+          target_branch: deploy
+          github_token: ${{ github.token }}
+
