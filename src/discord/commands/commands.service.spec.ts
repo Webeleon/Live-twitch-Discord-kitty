@@ -5,10 +5,11 @@ import { Message } from 'discord.js';
 import { ListHandler } from './handlers/list/list.handler';
 import { ShowHandler } from './handlers/show/show.handler';
 import { PetHandler } from './handlers/pet/pet.handler';
+import { DailyHandler } from './handlers/daily/daily.handler';
 
 describe('CommandsService', () => {
   let commandsService: CommandsService;
-  const startCommandHandlerMock = {
+  const commandHandlerMock = {
     test: jest.fn(),
     run: jest.fn(),
   };
@@ -19,28 +20,23 @@ describe('CommandsService', () => {
         CommandsService,
         {
           provide: StartHandler,
-          useValue: startCommandHandlerMock,
+          useValue: commandHandlerMock,
         },
         {
           provide: ListHandler,
-          useValue: {
-            test: jest.fn(),
-            run: jest.fn(),
-          },
+          useValue: commandHandlerMock,
         },
         {
           provide: ShowHandler,
-          useValue: {
-            test: jest.fn(),
-            run: jest.fn(),
-          },
+          useValue: commandHandlerMock,
         },
         {
           provide: PetHandler,
-          useValue: {
-            test: jest.fn(),
-            run: jest.fn(),
-          },
+          useValue: commandHandlerMock,
+        },
+        {
+          provide: DailyHandler,
+          useValue: commandHandlerMock,
         },
       ],
     }).compile();
@@ -53,11 +49,11 @@ describe('CommandsService', () => {
   });
 
   it('dispatch commands to the correct handler', async () => {
-    startCommandHandlerMock.test.mockReturnValue(true);
-    startCommandHandlerMock.run.mockResolvedValue('foo');
+    commandHandlerMock.test.mockReturnValue(true);
+    commandHandlerMock.run.mockResolvedValue('foo');
 
     const response = await commandsService.dispatch('start', {} as Message);
-    expect(startCommandHandlerMock.run).toHaveBeenCalled();
+    expect(commandHandlerMock.run).toHaveBeenCalled();
     expect(response).toBe('foo');
   });
 });

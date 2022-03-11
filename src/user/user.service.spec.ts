@@ -6,16 +6,29 @@ import { User } from './user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { InsufficientResourceError } from './errors/insufficient-resource.error';
 import { NegativeAmountError } from './errors/negative-amount.error';
+import { REDIS_CLIENT } from '@webeleon/nestjs-redis';
+import { OnCooldownError } from '../common/error/on-cooldown.error';
 
 describe('UserService', () => {
   let module: TestingModule;
   let userService: UserService;
   let userRepository: Repository<User>;
 
+  const redisClientMock = {
+    TTL: jest.fn(),
+    set: jest.fn(),
+  };
+
   beforeEach(async () => {
     module = await Test.createTestingModule({
       imports: [...TypeormSqliteTestingModule()],
-      providers: [UserService],
+      providers: [
+        UserService,
+        {
+          provide: REDIS_CLIENT,
+          useValue: redisClientMock,
+        },
+      ],
     }).compile();
 
     userService = module.get<UserService>(UserService);
@@ -174,6 +187,42 @@ describe('UserService', () => {
       await expect(() =>
         userService.consumeCoins('user_1', 10),
       ).rejects.toThrowError(InsufficientResourceError);
+    });
+  });
+
+  describe('daily bonus', () => {
+    it('return a daily bonus and apply it on the user', async () => {
+      const bonus = await userService.dailyBonus('user_1');
+
+      expect(bonus.coins).toBeLessThanOrEqual(100);
+      expect(bonus.fishes).toBeLessThanOrEqual(3);
+
+      const user = await userRepository.findOne({
+        where: {
+          discordId: 'user_1',
+        },
+      });
+
+      expect(user.fishes).toBe(bonus.fishes);
+      expect(user.coins).toBe(bonus.coins);
+    });
+
+    it('set a 24h cooldown', async () => {
+      await userService.dailyBonus('user_1');
+      expect(redisClientMock.set).toHaveBeenCalledWith(
+        `DAILY_user_1`,
+        'claimed',
+        {
+          EX: 24 * 60 * 60,
+        },
+      );
+    });
+
+    it('throw a cooldown error if the TTL is more than 0', async () => {
+      redisClientMock.TTL.mockResolvedValueOnce(10);
+      await expect(() => userService.dailyBonus('user_1')).rejects.toThrowError(
+        OnCooldownError,
+      );
     });
   });
 });

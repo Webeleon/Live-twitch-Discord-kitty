@@ -6,6 +6,7 @@ import { UserModule } from '../../user/user.module';
 import { ListHandler } from './handlers/list/list.handler';
 import { ShowHandler } from './handlers/show/show.handler';
 import { PetHandler } from './handlers/pet/pet.handler';
+import { DailyHandler } from './handlers/daily/daily.handler';
 
 @Module({
   imports: [KittyModule, UserModule],
@@ -15,6 +16,7 @@ import { PetHandler } from './handlers/pet/pet.handler';
     ListHandler,
     ShowHandler,
     PetHandler,
+    DailyHandler,
   ],
   exports: [CommandsService],
 })
