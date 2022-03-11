@@ -45,6 +45,8 @@ describe('[Handler] list kitties', () => {
             uuid: 'fake id',
             discordId: 'coco',
             kitties: [],
+            fishes: 0,
+            coins: 0,
           },
         },
       ];

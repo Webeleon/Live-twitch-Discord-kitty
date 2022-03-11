@@ -13,6 +13,16 @@ export class User {
   })
   discordId: string;
 
+  @Column({
+    default: 0,
+  })
+  coins: number;
+
+  @Column({
+    default: 0,
+  })
+  fishes: number;
+
   @OneToMany(() => Kitty, (kitty) => kitty.user)
   kitties: Kitty[];
 }

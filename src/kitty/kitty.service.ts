@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateKittyDto } from './dto/create-kitty.dto';
 import { KittenSex } from './enum/sex.enum';
 import { REDIS_CLIENT, RedisClient } from '@webeleon/nestjs-redis';
-import { OnCooldownError } from './error/on-cooldown.error';
+import { OnCooldownError } from '../common/error/on-cooldown.error';
 
 @Injectable()
 export class KittyService {

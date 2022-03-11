@@ -2,7 +2,7 @@ import { CommandHandler } from '../../interfaces/command-handler.interface';
 import { Message, MessageEmbed } from 'discord.js';
 import { Injectable, Logger } from '@nestjs/common';
 import { KittyService } from '../../../../kitty/kitty.service';
-import { OnCooldownError } from '../../../../kitty/error/on-cooldown.error';
+import { OnCooldownError } from '../../../../common/error/on-cooldown.error';
 
 @Injectable()
 export class PetHandler implements CommandHandler {

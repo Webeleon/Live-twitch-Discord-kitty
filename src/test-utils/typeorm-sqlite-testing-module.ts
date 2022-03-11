@@ -7,8 +7,8 @@ export const TypeormSqliteTestingModule = () => [
     type: 'better-sqlite3',
     database: ':memory:',
     dropSchema: true,
-    entities: [Kitty, User],
     synchronize: true,
+    autoLoadEntities: true,
   }),
   TypeOrmModule.forFeature([Kitty, User]),
 ];
