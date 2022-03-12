@@ -29,6 +29,6 @@ describe('kitty image generator', () => {
 
   it('svg to png', async () => {
     const buffer = await kittyImageGenerator.generate(kitty);
-    expect(buffer).toMatchSnapshot();
+    expect(buffer).toBeInstanceOf(Buffer);
   });
 });
