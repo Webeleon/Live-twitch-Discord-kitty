@@ -4,6 +4,7 @@ import { KittyService } from '../../../../kitty/kitty.service';
 import { Message } from 'discord.js';
 import { KittenSex } from '../../../../kitty/enum/sex.enum';
 import { NotFoundException } from '@nestjs/common';
+import { appConfig } from '../../../../configurations/app.config';
 
 describe('[Handler] show', () => {
   let showHandler: ShowHandler;
@@ -19,6 +20,12 @@ describe('[Handler] show', () => {
           useValue: kittyServiceMock,
         },
         ShowHandler,
+        {
+          provide: appConfig.KEY,
+          useValue: {
+            baseUrl: 'http://localhost',
+          },
+        },
       ],
     }).compile();
     showHandler = testingModule.get<ShowHandler>(ShowHandler);

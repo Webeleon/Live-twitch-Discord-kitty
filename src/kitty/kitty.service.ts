@@ -6,6 +6,7 @@ import { CreateKittyDto } from './dto/create-kitty.dto';
 import { KittenSex } from './enum/sex.enum';
 import { REDIS_CLIENT, RedisClient } from '@webeleon/nestjs-redis';
 import { OnCooldownError } from '../common/error/on-cooldown.error';
+import { KittyImageGenerator } from './kitty-image-generator.provider';
 
 @Injectable()
 export class KittyService {
@@ -13,6 +14,7 @@ export class KittyService {
     @InjectRepository(Kitty)
     private readonly kittyRepository: Repository<Kitty>,
     @Inject(REDIS_CLIENT) private readonly redisClient: RedisClient,
+    private readonly kittyImageGenerator: KittyImageGenerator,
   ) {}
 
   list() {
@@ -75,6 +77,16 @@ export class KittyService {
     }
 
     return kitten;
+  }
+
+  async getKittyImageById(kittenUuid: string): Promise<Buffer> {
+    const kitty = await this.kittyRepository.findOneOrFail({
+      where: {
+        uuid: kittenUuid,
+      },
+    });
+
+    return this.kittyImageGenerator.generate(kitty);
   }
 
   async listByDiscordId(discordId: string): Promise<Kitty[]> {

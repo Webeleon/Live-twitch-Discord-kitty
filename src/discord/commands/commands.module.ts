@@ -7,9 +7,11 @@ import { ListHandler } from './handlers/list/list.handler';
 import { ShowHandler } from './handlers/show/show.handler';
 import { PetHandler } from './handlers/pet/pet.handler';
 import { DailyHandler } from './handlers/daily/daily.handler';
+import { ConfigModule } from '@nestjs/config';
+import { appConfig } from '../../configurations/app.config';
 
 @Module({
-  imports: [KittyModule, UserModule],
+  imports: [KittyModule, UserModule, ConfigModule.forFeature(appConfig)],
   providers: [
     CommandsService,
     StartHandler,
