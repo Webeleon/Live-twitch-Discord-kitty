@@ -8,6 +8,7 @@ import { KittenSex } from './enum/sex.enum';
 import { User } from '../user/user.entity';
 import { NotFoundException } from '@nestjs/common';
 import { REDIS_CLIENT } from '@webeleon/nestjs-redis';
+import { KittyImageGenerator } from './kitty-image-generator.provider';
 
 describe('KittyService', () => {
   let kittyService: KittyService;
@@ -25,6 +26,12 @@ describe('KittyService', () => {
           useValue: {
             TTL: jest.fn(),
             set: jest.fn(),
+          },
+        },
+        {
+          provide: KittyImageGenerator,
+          useValue: {
+            generate: jest.fn(),
           },
         },
       ],

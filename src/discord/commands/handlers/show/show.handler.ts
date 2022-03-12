@@ -1,13 +1,19 @@
 import { CommandHandler } from '../../interfaces/command-handler.interface';
 import { Message, MessageEmbed } from 'discord.js';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { KittyService } from '../../../../kitty/kitty.service';
+import { appConfig } from '../../../../configurations/app.config';
+import { ConfigType } from '@nestjs/config';
 
 @Injectable()
 export class ShowHandler implements CommandHandler {
   regex = /^(?:show )(\w+)/i;
 
-  constructor(private readonly kittyService: KittyService) {}
+  constructor(
+    private readonly kittyService: KittyService,
+    @Inject(appConfig.KEY)
+    private readonly config: ConfigType<typeof appConfig>,
+  ) {}
 
   test(message: string): boolean {
     return this.regex.test(message);
@@ -32,6 +38,7 @@ export class ShowHandler implements CommandHandler {
       :eyes: eye color: ${kitten.eyeColor}
       :cat: fur color: ${kitten.furColor}
       :heart: affection: ${kitten.affection}`);
+      embed.setImage(`${this.config.baseUrl}/kitty/${kitten.uuid}/image.png`);
     } catch (error) {
       embed.setTitle(
         `Ooooh your kitten ${kittenName} does not seems to exist...`,
